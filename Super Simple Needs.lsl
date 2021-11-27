@@ -13,7 +13,7 @@ float opaque = 1.0;
 ///Variables for dialog menu
 string dialogInitial = "\nWhat need did you satisfy?";
 string dialogFollowup = "\nHow much did you satisfy this need?";
-list needsList = ["Sleep", "Food", "Bathroom", "Hygiene"];
+list needsList = ["Food", "Bathroom", "Hygiene", "Sleep"];  ///ordered differently to display correctly on dialog menu
 list sleepResponses = ["Sleep+", "Sleep++", "Sleep+++"];
 list foodResponses = ["Food+", "Food++", "Food+++"];
 list bathroomResponses = ["Bathroom+++"];
@@ -21,6 +21,18 @@ list hygieneResponses = ["Hygiene+", "Hygiene++", "Hygiene+++"];
 key toucher;
 integer dialogChannel;
 integer listenHandle;
+
+///Variables for HUD
+integer sleepBarLink = 2;
+integer foodBarLink = 3;
+integer bathroomBarLink = 4;
+integer hygieneBarLink = 5;
+vector sleepBarSize = <0.500, 0.010, 0.125>;
+vector foodBarSize = <0.500, 0.010, 0.125>;
+vector bathroomBarSize = <0.500, 0.010, 0.125>;
+vector hygieneBarSize = <0.500, 0.010, 0.125>;
+float standardWidth = 0.500;
+float currentWidth;
 
 ///functions
 float decayProcess(float need, float decay) {
@@ -34,34 +46,34 @@ float decayProcess(float need, float decay) {
     return need;
   }
 
-string needsText(string needName, float need) {
+string displayUpdate(float standardWidth, float need, integer bar, string needName) {
+    float currentWidth = standardWidth * (need / 100);
+    llSetLinkPrimitiveParamsFast(bar, [
+        PRIM_SIZE, <currentWidth, 0.010, 0.125>
+    ]);
     return needName + (string)llFloor(need) + "\n";
 }
+
 
 default
 {
     state_entry()
     {
-        llSetTimerEvent(1);  ///updates every second for testing
+        llSetTimerEvent(60);  ///updates every minute
         dialogChannel = -1 - (integer)("0x" + llGetSubString( (string)llGetKey(), -7, -1) ); ///determine a semi-randomized negative channel for dialog
-        llSetText("Sleep: 100\nFood: 100\nBladder: 100\nHygiene: 100", white, opaque);
     }
 
     timer()
     {
-        list region = llGetAgentList(AGENT_LIST_REGION,[]);
-        key owner = llGetOwner();
-        if(llListFindList(region, [owner]) != -1){ ///owner in region
-            sleep = decayProcess(sleep, sleepDecay);
-            string sleepText = needsText("Sleep: ", sleep);
-            food = decayProcess(food, foodDecay);
-            string foodText = needsText("Food: ", food);
-            bathroom = decayProcess(bathroom, bladderDecay);
-            string bathroomText = needsText("Bathroom: ", bathroom);
-            hygiene = decayProcess(hygiene, hygieneDecay);
-            string hygieneText = needsText("Hygiene: ", hygiene);
-            llSetText(sleepText + foodText + bathroomText + hygieneText, white, opaque);
-        }
+        sleep = decayProcess(sleep, sleepDecay);
+        food = decayProcess(food, foodDecay);
+        bathroom = decayProcess(bathroom, bladderDecay);
+        hygiene = decayProcess(hygiene, hygieneDecay);
+        string sleepText = displayUpdate(standardWidth, sleep, sleepBarLink, "Sleep: ");
+        string foodText = displayUpdate(standardWidth, food, foodBarLink, "Food: ");
+        string bathroomText = displayUpdate(standardWidth, bathroom, bathroomBarLink, "Bathroom: ");
+        string hygieneText = displayUpdate(standardWidth, hygiene, hygieneBarLink, "Hygiene: ");
+        llSetText(sleepText + foodText + bathroomText + hygieneText, white, 0);
     }
     touch_start(integer num_detected)
     {
