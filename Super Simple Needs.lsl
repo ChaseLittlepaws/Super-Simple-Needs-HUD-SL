@@ -42,7 +42,7 @@ default
 {
     state_entry()
     {
-        llSetTimerEvent(1);  ///updates every second for testing purposes
+        llSetTimerEvent(1);  ///updates every second for testing
         dialogChannel = -1 - (integer)("0x" + llGetSubString( (string)llGetKey(), -7, -1) ); ///determine a semi-randomized negative channel for dialog
         llSetText("Sleep: 100\nFood: 100\nBladder: 100\nHygiene: 100", white, opaque);
     }
@@ -67,6 +67,7 @@ default
     {
         toucher = llDetectedKey(0);
         llDialog(toucher, dialogInitial, needsList, dialogChannel);
+        llListenRemove(listenHandle);
         listenHandle = llListen(dialogChannel, "", toucher, "");
     }
     listen(integer channel, string name, key id, string message) {
@@ -93,7 +94,7 @@ default
             llDialog(toucher, dialogFollowup, bathroomResponses, dialogChannel);
         } else if(message == "Bathroom+++") {
             bathroom = 100;
-            hygiene -= 22.2222;
+            hygiene -= 33.3333;
         } else if(message == "Hygiene") {
             llDialog(toucher, dialogFollowup, hygieneResponses, dialogChannel);
         } else if(message == "Hygiene+") {
