@@ -3,7 +3,7 @@ float sleep = 100;
 float food = 100;
 float bathroom = 100;
 float hygiene = 100;
-float sleepDecay = 0.1042;
+float sleepDecay = 0.1042;  ///decay rate per minute
 float foodDecay = 0.208;
 float bladderDecay = 0.2777;
 float hygieneDecay = 0.0694;
@@ -37,7 +37,7 @@ float currentWidth;
 ///functions
 float decayProcess(float need, float decay) {
     if (need > 0 && need <= 100) {
-      need -= decay;
+      need -= (decay / 60);  ///decay rate per second
     } else if (need > 100) {
         need = 100;
     } else {
@@ -59,7 +59,7 @@ default
 {
     state_entry()
     {
-        llSetTimerEvent(60);  ///updates every minute
+        llSetTimerEvent(1);  ///updates every second
         dialogChannel = -1 - (integer)("0x" + llGetSubString( (string)llGetKey(), -7, -1) ); ///determine a semi-randomized negative channel for dialog
     }
 
