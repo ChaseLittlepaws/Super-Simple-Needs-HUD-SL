@@ -23,16 +23,14 @@ integer dialogChannel;
 integer listenHandle;
 
 ///Variables for HUD
-integer sleepBarLink = 2;
-integer foodBarLink = 3;
-integer bathroomBarLink = 4;
+integer sleepBarLink = 8;
+integer foodBarLink = 7;
+integer bathroomBarLink = 6;
 integer hygieneBarLink = 5;
-vector sleepBarSize = <0.500, 0.010, 0.125>;
-vector foodBarSize = <0.500, 0.010, 0.125>;
-vector bathroomBarSize = <0.500, 0.010, 0.125>;
-vector hygieneBarSize = <0.500, 0.010, 0.125>;
-float standardWidth = 0.500;
-float currentWidth;
+float standardX  = 0.1667;
+float standardY = 0.1667;
+float standardZ = 0.04167;
+float currentX;
 
 ///functions
 float decayProcess(float need, float decay) {
@@ -46,10 +44,12 @@ float decayProcess(float need, float decay) {
     return need;
   }
 
-string displayUpdate(float standardWidth, float need, integer bar, string needName) {
-    float currentWidth = standardWidth * (need / 100);
+string displayUpdate(float standardX
+, float need, integer bar, string needName) {
+    float currentX    = standardX
+     * (need / 100);
     llSetLinkPrimitiveParamsFast(bar, [
-        PRIM_SIZE, <currentWidth, 0.010, 0.125>
+        PRIM_SIZE, <currentX, standardY, standardZ>
     ]);
     return needName + (string)llFloor(need) + "\n";
 }
@@ -69,10 +69,10 @@ default
         food = decayProcess(food, foodDecay);
         bathroom = decayProcess(bathroom, bladderDecay);
         hygiene = decayProcess(hygiene, hygieneDecay);
-        string sleepText = displayUpdate(standardWidth, sleep, sleepBarLink, "Sleep: ");
-        string foodText = displayUpdate(standardWidth, food, foodBarLink, "Food: ");
-        string bathroomText = displayUpdate(standardWidth, bathroom, bathroomBarLink, "Bathroom: ");
-        string hygieneText = displayUpdate(standardWidth, hygiene, hygieneBarLink, "Hygiene: ");
+        string sleepText = displayUpdate(standardX, sleep, sleepBarLink, "Sleep: ");
+        string foodText = displayUpdate(standardX, food, foodBarLink, "Food: ");
+        string bathroomText = displayUpdate(standardX, bathroom, bathroomBarLink, "Bathroom: ");
+        string hygieneText = displayUpdate(standardX, hygiene, hygieneBarLink, "Hygiene: ");
         llSetText(sleepText + foodText + bathroomText + hygieneText, white, 0);
     }
     touch_start(integer num_detected)
