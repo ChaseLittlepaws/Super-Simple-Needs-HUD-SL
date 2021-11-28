@@ -44,8 +44,7 @@ float decayProcess(float need, float decay) {
     return need;
   }
 
-string displayUpdate(float standardX
-, float need, integer bar, string needName) {
+string displayUpdate(float standardX, float need, integer bar, string needName) {
     float currentX    = standardX
      * (need / 100);
     llSetLinkPrimitiveParamsFast(bar, [
